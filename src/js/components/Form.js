@@ -2,9 +2,11 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import uuidv1 from "uuid";
-import { addArticle } from "../actions/index";
+import { addArticle, getImages } from "../actions/index";
+//import { fetchImages } from '../actions/imageActions.js'
 const mapDispatchToProps = dispatch => {
   return {
+    getImages: () => dispatch(getImages()),
     addArticle: article => dispatch(addArticle(article))
   };
 };
@@ -17,6 +19,11 @@ class ConnectedForm extends Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
+  componentDidMount(){
+    this.props.getImages();
+  }
+
+
   handleChange(event) {
     this.setState({ [event.target.id]: event.target.value });
   }
