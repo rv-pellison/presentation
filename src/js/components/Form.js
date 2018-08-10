@@ -2,40 +2,52 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import uuidv1 from "uuid";
-import { addArticle, getImages } from "../actions/index";
+import { addArticle, getImages, updateImageTitle } from "../actions/index";
 //import { fetchImages } from '../actions/imageActions.js'
 const mapDispatchToProps = dispatch => {
   return {
-    getImages: () => dispatch(getImages()),
-    addArticle: article => dispatch(addArticle(article))
+    addArticle: article => dispatch(addArticle(article)),
+    updateTitle: image => dispatch(updateImageTitle(image))
   };
 };
 class ConnectedForm extends Component {
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      title: ""
+      selectedImgTit: this.props.selectedImg.title,
+      // title: "",
+      selectedImgId: this.props.selectedImg._id
     };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  componentDidMount(){
-    this.props.getImages();
+
+  componentDidUpdate(oldProps) {
+    if(this.props === oldProps) {
+      return;
+    }
+    console.log('didreceiveprops');
+    console.log(this.props.selectedImg.title);
+    this.setState({selectedImgTit: this.props.selectedImg.title});
   }
+  
 
 
   handleChange(event) {
-    this.setState({ [event.target.id]: event.target.value });
+    this.setState({ selectedImgTit: event.target.value });
   }
   handleSubmit(event) {
     event.preventDefault();
-    const { title } = this.state;
-    const id = uuidv1();
-    this.props.addArticle({ title, id });
-    this.setState({ title: "" });
+    const { selectedImgTit, selectedImgId } = this.state;
+   // const id = uuidv1();
+    // this.props.addArticle({ selectedImgTit, selectedImgId });
+    this.props.updateTitle({selectedImgTit, selectedImgId})
+    // this.setState({ title: "" });
   }
   render() {
-    const { title } = this.state;
+    const { selectedImgTit, selectedImgId } = this.state;
+    console.log('render title');
+    console.log(selectedImgTit);
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="form-group">
@@ -43,8 +55,8 @@ class ConnectedForm extends Component {
           <input
             type="text"
             className="form-control"
-            id="title"
-            value={title}
+            id={selectedImgId}
+            value={selectedImgTit}
             onChange={this.handleChange}
           />
         </div>
